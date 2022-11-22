@@ -4,6 +4,8 @@ import android.os.Build
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.google.common.truth.Truth
+import com.udacity.project4.R
 import com.udacity.project4.locationreminders.data.FakeDataSource
 import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
 import com.udacity.project4.locationreminders.rule.MainCoroutineRule
@@ -11,10 +13,13 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.CoreMatchers
 import org.hamcrest.MatcherAssert
+import org.hamcrest.MatcherAssert.assertThat
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.koin.core.context.stopKoin
 import org.koin.test.AutoCloseKoinTest
 import org.robolectric.annotation.Config
 
@@ -41,6 +46,12 @@ class SaveReminderViewModelTest: AutoCloseKoinTest(){
             fakeDataSource)
     }
 
+    @After
+    fun tearDown() {
+        stopKoin()
+    }
+
+
     @Test
     fun shouldReturnError () = runBlockingTest  {
         val result = viewModel.validateEnteredData(createIncompleteReminder())
@@ -57,13 +68,38 @@ class SaveReminderViewModelTest: AutoCloseKoinTest(){
     }
 
     @Test
+    fun update_snackBar_empty_name_input () = mainCoroutineRule.runBlockingTest {
+        // GIVEN
+        var reminder = ReminderDataItem("", "description",
+            "location", 6.454202, 3.599068)
+
+        // WHEN
+        Truth.assertThat(viewModel.validateEnteredData(reminder)).isFalse()
+        Truth.assertThat(viewModel.showSnackBarInt.value).isEqualTo(R.string.err_enter_title)
+
+    }
+
+
+    @Test
+    fun update_snackBar_empty_location_input () = mainCoroutineRule.runBlockingTest {
+
+        // GIVEN
+        var reminder = ReminderDataItem("Title", "description",
+            "", 6.454202, 3.599068)
+
+        Truth.assertThat(viewModel.validateEnteredData(reminder)).isFalse()
+        Truth.assertThat(viewModel.showSnackBarInt.value).isEqualTo(R.string.err_select_location)
+
+    }
+
+    @Test
     fun checkLoading() = runBlockingTest {
 
         mainCoroutineRule.pauseDispatcher()
         viewModel.saveReminder(createFakeReminder())
-        MatcherAssert.assertThat(viewModel.showLoading.value, CoreMatchers.`is`(true))
+        assertThat(viewModel.showLoading.value, CoreMatchers.`is`(true))
         mainCoroutineRule.resumeDispatcher()
-        MatcherAssert.assertThat(viewModel.showLoading.value, CoreMatchers.`is`(false))
+        assertThat(viewModel.showLoading.value, CoreMatchers.`is`(false))
     }
 
     private fun createFakeReminder(): ReminderDataItem {
