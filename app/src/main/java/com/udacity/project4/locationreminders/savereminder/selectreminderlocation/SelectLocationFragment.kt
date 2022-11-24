@@ -29,9 +29,6 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 //        private val DEFAULT_LAT_LNG = LatLng(30.033333, 31.233334)  // Cairo
     }
 
-    enum class ZoomLevel(val level: Float) {
-        Streets(15f),
-    }
 
     //Use Koin to get the view model of the SaveReminder
     override val _viewModel: SaveReminderViewModel by inject()
@@ -176,7 +173,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
                     map.moveCamera(
                         CameraUpdateFactory.newLatLngZoom(
                             latLngValue,
-                            ZoomLevel.Streets.level
+                            15f
                         )
                     )
                     addMarker(latLngValue)
