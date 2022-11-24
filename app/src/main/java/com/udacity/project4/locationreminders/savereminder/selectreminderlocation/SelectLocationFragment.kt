@@ -26,9 +26,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 
     companion object {
         private const val FINE_LOCATION_PERMISSION_REQUEST_CODE = 1
-//        private val DEFAULT_LAT_LNG = LatLng(30.033333, 31.233334)  // Cairo
     }
-
 
     //Use Koin to get the view model of the SaveReminder
     override val _viewModel: SaveReminderViewModel by inject()
