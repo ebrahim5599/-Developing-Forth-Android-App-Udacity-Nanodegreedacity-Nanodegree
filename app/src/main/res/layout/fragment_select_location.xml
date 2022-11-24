@@ -27,7 +27,7 @@
             tools:context=".locationreminders.RemindersActivity" />
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/saveButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/colorAccent"
